@@ -28,3 +28,23 @@ func (c Course) Save(name string, description string, categoryID string) (Course
 
 	return Course{ID: id, Name: name, Description: description, CategoryID: categoryID}, nil
 }
+
+func (c Course) FindAll() ([]Course, error) {
+	rows, err := c.db.Query("SELECT id, name, description, category_id FROM course")
+	if err != nil {
+		return []Course{}, err
+	}
+	defer rows.Close()
+
+	courses := []Course{}
+	for rows.Next() {
+		var c Course
+		if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.CategoryID); err != nil {
+			return []Course{}, err
+		}
+
+		courses = append(courses, c)
+	}
+
+	return courses, nil
+}

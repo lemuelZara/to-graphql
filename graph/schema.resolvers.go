@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lemuelZara/to-graphql/graph/model"
 )
@@ -56,7 +55,17 @@ func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, erro
 
 // Courses is the resolver for the courses field.
 func (r *queryResolver) Courses(ctx context.Context) ([]*model.Course, error) {
-	panic(fmt.Errorf("not implemented: Courses - courses"))
+	courses, err := r.CourseDB.FindAll()
+	if err != nil {
+		return []*model.Course{}, err
+	}
+
+	cm := []*model.Course{}
+	for _, c := range courses {
+		cm = append(cm, &model.Course{ID: c.ID, Name: c.Name, Description: &c.Description})
+	}
+
+	return cm, nil
 }
 
 // Mutation returns MutationResolver implementation.
